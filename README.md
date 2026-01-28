@@ -1,4 +1,4 @@
 115分享直接跳转app loon插件   
-[一键安装](https://www.nsloon.com/openloon/import?plugin=encode[https://raw.githubusercontent.com/chas0000/script/main/115_rewrite.lpx])
+[一键安装](https://www.nsloon.com/openloon/import?plugin=https://raw.githubusercontent.com/chas0000/script/main/115_rewrite.lpx)
 
 

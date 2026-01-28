@@ -4,7 +4,7 @@
 #!system = iOS,iPadOS,tvOS,macOS
 #!system_version = 
 #!loon_version = 3.3.2(877)
-#!icon = https://cdnres.115.com/site/static/style_v11.2/frame/images/logo.svg
+#!icon = https://img.onlinedown.net/20220923/632d634e75985.png
 #!homepage = https://github.com/chas0000/script/readme.md
 
 [Rewrite]

@@ -4,7 +4,7 @@
 #!system = iOS,iPadOS,tvOS,macOS
 #!system_version = 
 #!loon_version = 3.3.2(877)
-#!icon = https://img.onlinedown.net/20220923/632d634e75985.png
+#!icon = https://raw.githubusercontent.com/chas0000/script/main/115生活.png
 #!homepage = https://github.com/chas0000/script/readme.md
 
 [Rewrite]

@@ -8,7 +8,7 @@
 #!homepage = https://github.com/chas0000/script/readme.md
 
 [Rewrite]
-^https:\/\/115\.com\/s\/.* url script-redirect 115_redirect.js
+^https:\/\/115\.com\/s\/.*  url script-redirect https://raw.githubusercontent.com/chas0000/script/main/115_redirect.js
 
 [MITM]
 hostname = 115.com

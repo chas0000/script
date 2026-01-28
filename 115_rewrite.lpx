@@ -9,7 +9,8 @@
 
 [Rewrite]
 ^https:\/\/115\.com\/s\/(.*) oof.disk://openurl/https://115.com/s/$1 302
+^https:\/\/115cdn\.com\/s\/(.*) oof.disk://openurl/https://115.com/s/$1 302
 
 [MITM]
-hostname = 115.com
+hostname = 115.com,115cdn.com 
 

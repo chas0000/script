@@ -1,0 +1,14 @@
+#!name = 115_share_rewrite
+#!desc = 115分享重写
+#!author = mieqq
+#!system = iOS,iPadOS,tvOS,macOS
+#!system_version = 
+#!loon_version = 3.3.2(877)
+#!icon = https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Apple.png
+#!homepage = https://github.com/chas0000/script/readme.md
+
+[Rewrite]
+^https:\/\/115\.com\/s\/.* url script-redirect 115_redirect.js
+
+[MITM]
+hostname = 115.com

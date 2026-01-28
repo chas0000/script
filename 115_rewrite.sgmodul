@@ -1,0 +1,14 @@
+#!name=115_share_rewrite
+#!desc=115分享重写
+#!author=chas
+#!icon=https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Apple.png
+#!loon_version=3.3.2(877)
+#!homepage=https://github.com/chas0000/script/readme.md
+
+[URL Rewrite]
+^https:\/\/115\.com\/s\/(.*) oof.disk://openurl/https://115.com/s/$1 302
+^https:\/\/115cdn\.com\/s\/(.*) oof.disk://openurl/https://115.com/s/$1 302
+
+[MITM]
+hostname = %APPEND% 115.com, 115cdn.com
+

@@ -8,7 +8,8 @@
 #!homepage = https://github.com/chas0000/script/readme.md
 
 [Rewrite]
-^https:\/\/115\.com\/s\/.*  url script-redirect https://raw.githubusercontent.com/chas0000/script/main/115_redirect.js
+^https:\/\/115\.com\/s\/(.*) oof.disk://openurl/https://115.com/s/$1 302
 
 [MITM]
-hostname = 115.com, www.115.com, proapi.115.com
+hostname = 115.com
+

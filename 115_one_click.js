@@ -8,8 +8,8 @@
 // @grant        GM_setClipboard
 // @grant        GM_notification
 // @run-at       document-end
-// @updateURL    https://raw.githubusercontent.com/chas0000/script/main/ed2k一键复制.js
-// @downloadURL  https://raw.githubusercontent.com/chas0000/script/main/ed2k一键复制.js
+// @updateURL    https://raw.githubusercontent.com/chas0000/script/main/115_one_click.js
+// @downloadURL  https://raw.githubusercontent.com/chas0000/script/main/115_one_click.js
 // ==/UserScript==
 
 (function() {

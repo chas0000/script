@@ -193,7 +193,7 @@
 
     // 提取ed2k链接
     function extractEd2kLinks(text) {
-        const ed2kRegex = /ed2k:\/\/\|file\|[^|]+\|[0-9]+\|[A-Fa-f0-9]{32}\|\//g;
+        const ed2kRegex = /ed2k:\/\/\|file\|[^|]+\|[0-9]+\|[A-Fa-f0-9]{32}\|(?:[^|]+\|)*\//g;
         const matches = text.match(ed2kRegex);
 
         if (matches) {

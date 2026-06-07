@@ -3,3 +3,5 @@
 [QX链接] <https://raw.githubusercontent.com/chas0000/script/main/115_rewrite.conf>   
 [surge/egern/shadowrocket] <[https://raw.githubusercontent.com/chas0000/script/main/115_rewrite.conf](https://raw.githubusercontent.com/chas0000/script/main/115_rewrite.sgmodul)>  
 
+115自动复制
+[油猴一键安装](https://raw.githubusercontent.com/chas0000/script/main/115_one_click.js) 

@@ -5,7 +5,7 @@
 // @description  自动识别ed2k、磁力链接、115网盘链接，提供分类复制功能，适配安卓设备
 // @author       You
 // @match        *://*telegra.ph/*
-// @match        *://*catbox.moe/*
+// @match        *://files.catbox.moe/*
 // @grant        GM_setClipboard
 // @grant        GM_notification
 // @run-at       document-end

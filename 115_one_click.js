@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         多格式链接一键复制工具
 // @namespace    http://tampermonkey.net/
-// @version      2.3
+// @version      2.4
 // @description  自动识别ed2k、磁力链接、115网盘链接，提供分类复制功能，适配安卓设备
 // @author       You
 // @match        *://*telegra.ph/*
@@ -296,10 +296,9 @@
                     console.log('URL:', url);
                     console.log('OOF URL:', oofUrl);
                     if (!url || !oofUrl) {
-                        alert('错误：按钮数据丢失！');
+                        console.error('错误：按钮数据丢失！');
                         return false;
                     }
-                    alert('按钮被点击！即将打开: ' + url);
                     handleInlinePan115Click(url, oofUrl, this);
                     return false;
                 };
@@ -321,10 +320,9 @@
                     console.log('URL:', url);
                     console.log('OOF URL:', oofUrl);
                     if (!url || !oofUrl) {
-                        alert('错误：按钮数据丢失！');
+                        console.error('错误：按钮数据丢失！');
                         return false;
                     }
-                    alert('触摸按钮！即将打开: ' + url);
                     handleInlinePan115Click(url, oofUrl, this);
                     return false;
                 };

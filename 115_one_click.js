@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         多格式链接一键复制工具
 // @namespace    http://tampermonkey.net/
-// @version      2.1
+// @version      2.2
 // @description  自动识别ed2k、磁力链接、115网盘链接，提供分类复制功能，适配安卓设备
 // @author       You
 // @match        *://*telegra.ph/*

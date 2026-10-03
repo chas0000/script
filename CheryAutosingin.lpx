@@ -1,4 +1,4 @@
-#!name = 奇瑞汽车 App 自动签到 (老版抓包语法)
+#!name = 奇瑞汽车 App 自动签到 (diy修复)
 #!desc = 修正 URL 正则表达，确保脚本正常显示并正确抓包
 #!author = chas0000
 #!icon = https://raw.githubusercontent.com/kwmet/Loon-Gallery/main/icon/chery.png

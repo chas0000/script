@@ -1,35 +1,26 @@
 /**
- * 奇瑞 App 抓包获取 Token
- * 类型: Request Script
+ * 奇瑞 App Token 自动抓取脚本 (增强日志版)
  */
-try {
-  const headers = $request.headers || {};
-  const url = $request.url || '';
-  let token = '';
+const logPrefix = '[奇瑞抓包]';
+console.log(`${logPrefix} 触发请求: ${$request.url}`);
 
-  // 1. 从 Header 提取
-  const auth = headers['Authorization'] || headers['authorization'] || headers['token'] || headers['access_token'];
-  if (auth && typeof auth === 'string') {
-    token = auth.replace(/Bearer\s+/i, '').trim();
-  }
+if ($request &&$request.headers) {
+  // 兼顾大小写和各种 Token 传递方式
+  let headers = $request.headers;
+  let auth = headers['Authorization'] || headers['authorization'] || headers['token'] || headers['access_token'];
 
-  // 2. 从 URL 提取
-  if (!token && url.indexOf('access_token=') !== -1) {
-    token = url.split('access_token=')[1].split('&')[0];
+  if (auth) {
+    // 过滤 Bearer 前缀
+    let token = auth.replace(/^Bearer\s+/i, '').trim();
+    
+    // 保存至 PersistentStore
+    $persistentStore.write(token, 'chery_access_token');
+    console.log(`${logPrefix} 🎉 成功抓取并保存 Token: ${token.substring(0, 10)}...`);
+    
+    $notification.post('奇瑞 App 抓包', '🎉 Token 抓取成功', `前缀: ${token.substring(0, 8)}...\n已成功写入 Loon 本地存储！`);
+  } else {
+    console.log(`${logPrefix} ⚠️ 请求未包含 Authorization 请求头`);
   }
-
-  // 3. 保存并写入通知
-  if (token && token.length > 10) {
-    let oldToken = $persistentStore.read('chery_access_token');
-    if (oldToken !== token) {
-      $persistentStore.write(token, 'chery_access_token');
-      console.log('[奇瑞抓包] 🔑 写入成功: ' + token);
-      $notification.post('奇瑞 App', '🎉 Token 抓取成功', 'Token 前缀: ' + token.substring(0, 8) + '...');
-    }
-  }
-} catch (e) {
-  console.log('[奇瑞抓包] ❌ 执行异常: ' + String(e));
 }
 
-// Request 脚本必须放行原请求
-$done({});
+// 请求拦截必须返回 $done({})$done({});

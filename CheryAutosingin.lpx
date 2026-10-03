@@ -11,10 +11,7 @@ manual_token = input, "", tag=手动输入 Token (备用), desc=若自动抓包�
 # 1. 后台静默抓包 (HTTP 被动触发)
 http-request if ${url} ~= /chery\.cn/ then script("https://raw.githubusercontent.com/chas0000/script/refs/heads/main/chery_get_token.js") with tag="奇瑞App-获取Token(自动)", enable=true
 
-# 2. 详情页可显示的手动/测试入口 (Generic 脚本)
-generic then script("https://raw.githubusercontent.com/chas0000/script/refs/heads/main/chery_get_token.js") with tag="奇瑞App-获取Token(手动/测试)"
-
-# 3. 定时签到脚本
+# 2. 定时签到脚本
 cron ${cron} then script("https://raw.githubusercontent.com/chas0000/script/refs/heads/main/chery_checkin.js", {${manual_token}}) with tag="奇瑞App-定时签到", timeout=300
 
 [Mitm]

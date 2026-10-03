@@ -9,7 +9,7 @@ manual_token = input, "", tag=手动输入 Token (备用), desc=若自动抓包�
 
 [Script]
 # 1. 抓包脚本：使用规范的标准正则 (/chery\.cn/ 取消前面的 ^https?:\/\/)
-http-request ^https?:\/\/.*chery\.cn\/ script-path=https://raw.githubusercontent.com/chas0000/script/refs/heads/main/chery_checkin.js, requires-body=false, tag=奇瑞App-获取Token
+http-request ^https?:\/\/.*chery\.cn\/ script-path=https://raw.githubusercontent.com/chas0000/script/refs/heads/main/chery_get_token.js, requires-body=false, tag=奇瑞App-获取Token
 # 2. 定时签到脚本
 cron ${cron} then script("https://raw.githubusercontent.com/chas0000/script/refs/heads/main/chery_checkin.js", {${manual_token}}) with tag="奇瑞App-定时签到", timeout=300
 

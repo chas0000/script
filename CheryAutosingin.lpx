@@ -1,4 +1,24 @@
-#!name = 奇瑞汽车 App 自动签到 (动态 Token 增强版)
+#!name = 奇瑞汽车 App 自动签到 (手动补救+强力抓包版)
+#!desc = 支持持久化存储检测、手输 Token 备用与自动抓包写入
+#!author = fmz200 & Assistant
+#!icon = https://raw.githubusercontent.com/kwmet/Loon-Gallery/main/icon/chery.png
+#!tag = 签到, 自动任务
+#!system = iOS, iPadOS, macOS
+#!loon_version = 3.5.0
+
+[Argument]
+cron = input, "0 9 * * *", tag=签到执行时间, desc=Cron定时表达式，默认每天 09:00
+manual_token = input, "", tag=手动输入Token(备用), desc=若自动抓包搜不到，在此粘贴抓包拿到的 Bearer Token（不带 Bearer 前缀）
+
+[Script]
+# 1. 抓包重写：拦截所有 chery.cn 请求并写入 PersistentStore
+http-request ^https?:\/\/.*chery\.cn\/ code-block="const headers = $request.headers; const url = $request.url; let token = ''; const auth = headers['Authorization'] || headers['authorization'] || headers['token'] || headers['access_token']; if (auth) { token = auth.replace(/Bearer\s+/i, '').trim(); } if (!token && url.indexOf('access_token=') !== -1) { token = url.split('access_token=')[1].split('&')[0]; } if (token && token.length > 10) { $persistentStore.write(token, 'chery_access_token'); console.log('[奇瑞App] 🔑 成功写入 PersistentStore: ' + token); $notification.post('奇瑞 App', '🎉 Token 抓取并写入成功', 'Token 前缀: ' + token.substring(0, 8) + '...'); } $done({});", requires-body=false, tag=奇瑞App-获取Token
+
+# 2. 定时签到脚本：优先读取持久化存储，若无则使用 Argument 手输 Token
+cron "{cron}" code-block="const logPrefix = '[奇瑞App签到]'; let token = $persistentStore.read('chery_access_token') || $argument.manual_token; console.log(logPrefix + ' 开始读取 Token...'); if (!token) { console.log(logPrefix + ' ❌ 持久化存储与 Argument 均未找到 Token'); $notification.post('奇瑞 App 签到', '❌ 签到中断', '未搜到 Token！请打开奇瑞 App 刷新，或在插件参数中手动输入 Token'); $done(); } else { console.log(logPrefix + ' ✅ 使用 Token: ' + token.substring(0, 8) + '...'); $notification.post('奇瑞 App 签到', 'ℹ️ 开始签到', '正在发送请求...'); const userAgent = 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 ios/1.0.0'; const options = { url: 'https://mobile-consumer-sapp.chery.cn/web/event/trigger?access_token=' + token, headers: { 'Content-Type': 'application/json', 'Origin': 'https://hybrid-sapp.chery.cn', 'User-Agent': userAgent, 'Authorization': 'Bearer ' + token, 'Referer': 'https://hybrid-sapp.chery.cn/', 'Accept': '*/*' }, body: JSON.stringify({ eventCode: 'SJ10002' }) }; $httpClient.post(options, function (error, response, data) { if (error) { console.log(logPrefix + ' ❌ 请求失败: ' + JSON.stringify(error)); $notification.post('奇瑞 App 签到', '❌ 网络失败', '请求异常'); } else { try { console.log(logPrefix + ' 📥 响应: ' + data); let res = JSON.parse(data); if (res.status === 200) { $notification.post('奇瑞 App 签到', '🎉 签到成功', '每日签到任务已完成！'); } else { $notification.post('奇瑞 App 签到', '⚠️ 签到失败', res.message || 'Token 已失效'); } } catch (e) { $notification.post('奇瑞 App 签到', '❌ 解析失败', '返回数据格式错误'); } } $done(); }); }", tag=奇瑞App-定时签到, timeout=60, argument=[{cron},{manual_token}]
+
+[Mitm]
+hostname = *.chery.cn, hybrid-sapp.chery.cn, mobile-consumer-sapp.chery.cn#!name = 奇瑞汽车 App 自动签到 (动态 Token 增强版)
 #!desc = 动态抓取并自动覆盖最新的 Bearer Token，支持实时变更通知与定时签到
 #!author = fmz200 & Assistant
 #!icon = https://raw.githubusercontent.com/kwmet/Loon-Gallery/main/icon/chery.png

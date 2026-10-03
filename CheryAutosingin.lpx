@@ -1,5 +1,5 @@
-#!name = 奇瑞汽车 App 自动签到 (官方 API 终极适配版)
-#!desc = 严格遵守 Loon 11.1($done()) 与 11.2($done({})) 规范，支持自动抓包与定时签到
+#!name = 奇瑞汽车 App 自动签到 (GitHub 双脚本版)
+#!desc = 引用 GitHub 远程 JS 文件，支持自动抓包与定时自动签到
 #!author = fmz200 & Assistant
 #!icon = https://raw.githubusercontent.com/kwmet/Loon-Gallery/main/icon/chery.png
 #!tag = 签到, 自动任务
@@ -11,11 +11,11 @@ cron = input, "0 9 * * *", tag=签到执行时间, desc=Cron定时表达式，�
 manual_token = input, "", tag=手动输入Token(备用), desc=若自动抓包未搜到，在此输入 Bearer Token（不带 Bearer 前缀）
 
 [Script]
-# 1. Request Script 抓包：捕获 Bearer Token 并存入 PersistentStore（放行原请求用 $done({})）
-http-request ^https?:\/\/.*chery\.cn\/ code-block="try { const headers = $request.headers || {}; const url = $request.url || ''; let token = ''; const auth = headers['Authorization'] || headers['authorization'] || headers['token'] || headers['access_token']; if (auth && typeof auth === 'string') { token = auth.replace(/Bearer\s+/i, '').trim(); } if (!token && url.indexOf('access_token=') !== -1) { token = url.split('access_token=')[1].split('&')[0]; } if (token && token.length > 10) { let oldToken = $persistentStore.read('chery_access_token'); if (oldToken !== token) { $persistentStore.write(token, 'chery_access_token'); console.log({ message: '[奇瑞App] 🔑 抓取成功', token: token.substring(0, 8) + '...' }); $notification.post('奇瑞 App', '🎉 Token 抓取成功', 'Token: ' + token.substring(0, 8) + '... 已保存'); } } } catch(e) { console.log({ error: '抓包脚本异常', details: String(e) }); } $done({});", requires-body=false, tag=奇瑞App-获取Token
+# 1. 抓包脚本：捕获 Token 并保存到 PersistentStore
+http-request ^https?:\/\/.*chery\.cn\/ script-path=https://raw.githubusercontent.com/chas0000/script/refs/heads/main/chery_get_token.js, requires-body=false, tag=奇瑞App-获取Token
 
-# 2. Cron 签到脚本：执行定时任务（结束任务用 $done()）
-cron "{cron}" code-block="const logPrefix = '[奇瑞App签到]'; console.log(logPrefix + ' 开始检查 Token...'); let storeToken = $persistentStore.read('chery_access_token'); let argToken = typeof $argument === 'object' && $argument ? $argument.manual_token : ''; let token = storeToken || argToken; if (!token) { console.log(logPrefix + ' ❌ 未找到 Token'); $notification.post('奇瑞 App 签到', '❌ 签到中断', '未抓到 Token！请进入 App 刷新或在插件参数中填入'); $done(); } else { console.log(logPrefix + ' ✅ 使用 Token: ' + String(token).substring(0, 8) + '...'); const userAgent = 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 ios/1.0.0'; const options = { url: 'https://mobile-consumer-sapp.chery.cn/web/event/trigger?access_token=' + token, timeout: 8000, headers: { 'Content-Type': 'application/json', 'Origin': 'https://hybrid-sapp.chery.cn', 'User-Agent': userAgent, 'Authorization': 'Bearer ' + token, 'Referer': 'https://hybrid-sapp.chery.cn/', 'Accept': '*/*' }, body: JSON.stringify({ eventCode: 'SJ10002' }) }; $httpClient.post(options, function (error, response, data) { if (error) { console.log({ error: '请求失败', details: String(error) }); $notification.post('奇瑞 App 签到', '❌ 网络失败', String(error)); } else { try { console.log({ status: response ? response.status : 0, data: String(data) }); let res = JSON.parse(data || '{}'); if (res.status === 200) { $notification.post('奇瑞 App 签到', '🎉 签到成功', '每日任务完成！'); } else { let msg = res.message ? String(res.message) : 'Token 已失效'; $notification.post('奇瑞 App 签到', '⚠️ 签到失败', msg); } } catch (e) { $notification.post('奇瑞 App 签到', '❌ 解析失败', '返回数据格式非 JSON'); } } $done(); }); }", tag=奇瑞App-定时签到, timeout=60, argument=[{cron},{manual_token}]
+# 2. 定时签到脚本：读取 Token 执行每日签到
+cron "{cron}" script-path=https://raw.githubusercontent.com/chas0000/script/refs/heads/main/chery_checkin.js, tag=奇瑞App-定时签到, timeout=60, argument=[{manual_token}]
 
 [Mitm]
 hostname = *.chery.cn, hybrid-sapp.chery.cn, mobile-consumer-sapp.chery.cn

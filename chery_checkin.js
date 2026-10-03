@@ -1,52 +1,40 @@
 /**
- * 奇瑞 App 定时签到
- * 类型: Cron Script
+ * 奇瑞 App 签到结果解析片段
  */
-const logPrefix = '[奇瑞签到]';
-console.log(logPrefix + ' 开始执行签到...');
+try {
+  console.log(logPrefix + ' 📥 响应内容: ' + String(data));
+  let res = JSON.parse(data || '{}');
+  let code = res.status || res.code;
+  let msg = res.message || '未知结果';
+  let resData = res.data || {};
 
-let storeToken = $persistentStore.read('chery_access_token');
-let argToken = typeof $argument === 'object' && $argument ? $argument.manual_token : '';
-let token = storeToken || argToken;
+  // 1. 判断是否成功
+  if (code === 200) {
+    // 检查返回数据中的 todayCompleted 和 continualDays
+    let completed = resData.todayCompleted;
+    let days = resData.continualDays;
 
-if (!token) {
-  console.log(logPrefix + ' ❌ 未找到 Token');
-  $notification.post('奇瑞 App 签到', '❌ 签到中断', '未抓到 Token！请进入 App 刷新或手动填入');
-  $done();
-} else {
-  console.log(logPrefix + ' ✅ 使用 Token: ' + String(token).substring(0, 8) + '...');
-  
-  const options = {
-    url: 'https://mobile-consumer-sapp.chery.cn/web/event/trigger?access_token=' + token,
-    timeout: 8000,
-    headers: {
-      'Content-Type': 'application/json',
-      'Origin': 'https://hybrid-sapp.chery.cn',
-      'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_2 like Mac OS X) AppleWebKit/605.1.15',
-      'Authorization': 'Bearer ' + token,
-      'Referer': 'https://hybrid-sapp.chery.cn/',
-      'Accept': '*/*'
-    },
-    body: JSON.stringify({ eventCode: 'SJ10002' })
-  };
-
-  $httpClient.post(options, function (error, response, data) {
-    if (error) {
-      console.log(logPrefix + ' ❌ 网络错误: ' + String(error));
-      $notification.post('奇瑞 App 签到', '❌ 网络失败', String(error));
+    if (completed === true) {
+      // 捕获已完成状态（无论是刚签成功，还是重复请求）
+      let subTitle = 'ℹ️ 今日已完成签到';
+      let detail = '已连续签到 ' + (days !== undefined ? days : 'X') + ' 天！';
+      
+      console.log(logPrefix + ' ' + subTitle + ' | ' + detail);
+      $notification.post('奇瑞 App 签到', subTitle, detail);
     } else {
-      try {
-        console.log(logPrefix + ' 📥 响应数据: ' + String(data));
-        let res = JSON.parse(data || '{}');
-        if (res.status === 200) {
-          $notification.post('奇瑞 App 签到', '🎉 签到成功', '每日任务已完成！');
-        } else {
-          $notification.post('奇瑞 App 签到', '⚠️️ 签到失败', res.message || 'Token 已失效');
-        }
-      } catch (e) {
-        $notification.post('奇瑞 App 签到', '❌ 解析失败', '返回数据格式非 JSON');
-      }
+      // 签到成功的常规通知
+      let subTitle = '🎉 签到成功';
+      let detail = days ? '已连续签到 ' + days + ' 天！' : '每日签到任务已完成！';
+      
+      $notification.post('奇瑞 App 签到', subTitle, detail);
     }
-    $done();
-  });
+  } else if (msg.includes('已签到') || msg.includes('重复') || msg.includes('今日已')) {
+    // 兼容其他返回文本提示已签到的分支
+    $notification.post('奇瑞 App 签到', 'ℹ️ 今日已签到', msg);
+  } else {
+    // 失败/Token失效分支
+    $notification.post('奇瑞 App 签到', '⚠️️ 签到失败', msg);
+  }
+} catch (e) {
+  $notification.post('奇瑞 App 签到', '❌ 解析失败', '返回数据非标准 JSON');
 }

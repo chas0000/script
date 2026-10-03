@@ -20,7 +20,7 @@ if (!token) {
 } else {
   // 2. 发起签到请求
   const request = {
-    url: 'https://mobile-consumer-sapp.chery.cn/web/task/record/sign-in/lottery?encryptParam=',
+    url: 'https://mobile-consumer-sapp.chery.cn/web/task/record/sign-in/lottery?taskCode=SIGN_IN&encryptParam=',
     method: 'GET',
     headers: {
       'Authorization': `Bearer ${token}`,

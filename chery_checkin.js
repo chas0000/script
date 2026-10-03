@@ -1,5 +1,5 @@
 /**
- * 奇瑞 App 定时签到脚本 (抓包精准对齐版)
+ * 奇瑞 App 定时签到脚本 (去除加密头测试版)
  */
 const logPrefix = '[奇瑞签到]';
 
@@ -18,13 +18,12 @@ if (!token) {
   $notification.post('奇瑞 App 签到', '⚠️ 签到失败', '未配置 Token，请先打开奇瑞 App 获取');
   $done();
 } else {
-  // 2. 构造与抓包 100% 对齐的 Request 请求
+  // 2. 构造干净的请求（不带空的 encryptParam 和 encryptFlag）
   const request = {
-    url: 'https://mobile-consumer-sapp.chery.cn/web/task/record/sign-in/lottery?taskCode=SIGN_IN&encryptParam=',
+    url: 'https://mobile-consumer-sapp.chery.cn/web/task/record/sign-in/lottery?taskCode=SIGN_IN',
     method: 'GET',
     headers: {
       'Authorization': `Bearer ${token}`,
-      'encryptFlag': 'true',
       'User-Agent': 'ios/1.0.0',
       'Content-Type': 'application/json',
       'Accept': '*/*',
@@ -34,9 +33,9 @@ if (!token) {
     }
   };
 
-  console.log(`${logPrefix} 🚀 发送精准匹配签到请求...`);
+  console.log(`${logPrefix} 🚀 发送未加密签到请求...`);
 
-  // 3. 发送请求并解析结果
+  // 3. 发送请求
   $httpClient.get(request, function(error, response, data) {
     if (error) {
       console.log(`${logPrefix} ❌ 网络请求失败: ${error}`);
@@ -64,7 +63,7 @@ if (!token) {
             $notification.post('奇瑞 App 签到', subTitle, detail);
           }
         } else if (msg.includes('已签到') || msg.includes('重复') || msg.includes('今日已')) {
-          $notification.post('奇瑞 App 签到', 'ℹ️️ 今日已签到', msg);
+          $notification.post('奇瑞 App 签到', 'ℹ️ 今日已签到', msg);
         } else {
           $notification.post('奇瑞 App 签到', '⚠️ 签到未成功', msg);
         }
